@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather-Dart</title>
+  <link rel="stylesheet" href="weather-dart.css">
+</head>
+<body>
+  <header>
+    <div class="header-icon">🎯</div>
+    <h1>Weather-Dart</h1>
+    <p class="subtitle">Targeted Forecasts for Any Location & Time (coming soon)</p>
+    <p class="credits">CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magian) & his Lovely AI Assistant Luma</p>
+    <p id="current-date">Loading date...</p>
+    <p id="current-location">Loading location...</p>
+  </header>
+
+  <section id="input-section">
+    <h2>Forecast Source</h2>
+    <div class="toggle-group">
+      <input type="radio" id="use-latlon" name="source" value="latlon" checked>
+      <label for="use-latlon">Use Current Lat/Lon</label>
+      <input type="radio" id="use-address" name="source" value="address">
+      <label for="use-address">Use Address</label>
+    </div>
+    <input type="text" id="address-input" placeholder="Enter new address to update variables">
+    <p id="input-error" class="error-message"></p>
+  </section>
+
+  <section id="tip-section">
+    <button id="tip-button">Please tip</button>
+    <label class="not-now">
+      <input type="checkbox" id="not-now-checkbox"> Not now, thank you
+    </label>
+  </section>
+
+  <section id="forecast-section">
+    <button id="get-forecast" disabled>Get Luma Forecast</button>
+    <pre id="forecast-output" readonly></pre>
+    <p id="tip-text">Please tip, Thank you.</p>
+    <button id="copy-button">Copy Manually</button>
+  </section>
+
+  <script src="forecast.js"></script>
+</body>
+</html>
