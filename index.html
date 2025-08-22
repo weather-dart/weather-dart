@@ -7,41 +7,41 @@
   <link rel="stylesheet" href="weather-dart.css">
 </head>
 <body>
-  <header>
+  <div class="header">
     <div class="header-icon">🎯</div>
     <h1>Weather-Dart</h1>
-    <p class="subtitle">Targeted Forecasts for Any Location & Time (coming soon)</p>
-    <p class="credits">CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magian) & his Lovely AI Assistant Luma</p>
-    <p id="current-date">Loading date...</p>
-    <p id="current-location">Loading location...</p>
-  </header>
+    <p>Targeted Forecasts for Any Location & Time (coming soon)</p>
+    <p>CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magician) & his Lovely AI Assistant Luma</p>
+    <p id="current-date"></p>
+    <p>Lat/Lon: <span id="latlon"></span></p>
+    <p>Address: <span id="address"></span></p>
+  </div>
 
-  <section id="input-section">
-    <h2>Forecast Source</h2>
-    <div class="toggle-group">
-      <input type="radio" id="use-latlon" name="source" value="latlon" checked>
-      <label for="use-latlon">Use Current Lat/Lon</label>
-      <input type="radio" id="use-address" name="source" value="address">
-      <label for="use-address">Use Address</label>
+  <div class="input-section">
+    <input type="text" id="address-input" placeholder="Enter address manually">
+    <div class="toggle-buttons">
+      <label><input type="radio" name="locMode" value="latlon" checked> Use LAT/LON</label>
+      <label><input type="radio" name="locMode" value="address"> Use Address</label>
     </div>
-    <input type="text" id="address-input" placeholder="Enter new address to update variables">
-    <p id="input-error" class="error-message"></p>
-  </section>
+  </div>
 
-  <section id="tip-section">
-    <button id="tip-button">Please tip</button>
-    <label class="not-now">
-      <input type="checkbox" id="not-now-checkbox"> Not now, thank you
-    </label>
-  </section>
+  <div class="tip-section">
+    <button id="tip-btn">Please Tip, Thank You</button>
+    <input type="checkbox" id="not-now"> Not now, thank you
+  </div>
 
-  <section id="forecast-section">
-    <button id="get-forecast" disabled>Get Luma Forecast</button>
-    <pre id="forecast-output" readonly></pre>
-    <p id="tip-text">Please tip, Thank you.</p>
-    <button id="copy-button">Copy Manually</button>
-  </section>
+  <div class="forecast-section">
+    <button id="forecast-btn">Get Luma Forecast</button>
+    <span>PASTE INTO GPT WINDOW</span>
+    <pre id="luma-forecast"></pre>
+    <button id="copy-btn">Copy Forecast</button>
+  </div>
 
+  <div class="qr-section">
+    <canvas id="qr-code"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <script src="forecast.js"></script>
 </body>
 </html>
