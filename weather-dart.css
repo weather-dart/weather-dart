@@ -1,20 +1,14 @@
 body {
   font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  background: #f0f0f0;
 }
 
 .container {
   max-width: 600px;
-  width: 90%;
-  margin: 20px;
+  margin: auto;
   padding: 20px;
-  background: #fff;
-  box-shadow: 0 0 8px rgba(0,0,0,0.2);
-  border-radius: 10px;
 }
 
 .header {
@@ -23,50 +17,63 @@ body {
 }
 
 .header-icon {
-  font-size: 2em;
-  margin-bottom: 10px;
+  font-size: 48px;
 }
 
-.input-section, .tip-section, .forecast-section, .qr-section {
+.subtitle, .credit {
+  font-style: italic;
+}
+
+.input-section {
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-input[type="text"], input[type="date"] {
-  width: 100%;
+.input-section input[type="text"] {
   padding: 8px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+  font-size: 14px;
 }
 
-.toggle label {
-  margin-right: 15px;
+.forecast-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-#luma-output {
-  background: #f7f7f7;
+.forecast-section button {
+  padding: 10px;
+  font-size: 14px;
+}
+
+.paste-instructions {
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+#forecast-box {
+  background-color: #eaeaea;
   padding: 10px;
   height: 200px;
   overflow-y: scroll;
+  white-space: pre-wrap;
   border: 1px solid #ccc;
 }
 
-.tip-section button {
-  font-family: cursive;
-  margin-right: 10px;
+.tip-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.tip-message {
+  font-style: italic;
+  margin-top: 5px;
 }
 
 .qr-section {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-top: 20px;
-}
-
-button {
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.instruction {
-  margin-left: 10px;
-  font-weight: bold;
 }
