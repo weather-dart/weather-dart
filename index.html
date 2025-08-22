@@ -1,53 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather-Dart</title>
-  <link rel="stylesheet" href="weather-dart.css">
-  <script src="forecast.js" defer></script>
+  <link rel="stylesheet" href="weather-dart.css" />
+  <script defer src="forecast.js"></script>
 </head>
 <body>
-  <div class="container">
-
+  <main class="container">
     <!-- Header / Intro -->
-    <div class="header">
-      <div class="header-icon">🎯</div>
-      <h1>Weather-Dart</h1>
-      <p class="subtitle">Targeted Forecasts for Any Location & Time (coming soon)</p>
-      <p class="credit">CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magician) & his Lovely AI Assistant Luma</p>
-      <p>Date: <input type="date" id="date-field"></p>
-      <p>Lat/Lon: <span id="latlon">Loading...</span></p>
-      <p>Address: <span id="address">Loading...</span></p>
-    </div>
+    <header class="header">
+      <div class="header-icon" aria-hidden="true">🎯</div>
+      <h1 class="title">Weather-Dart</h1>
+      <p class="subtitle">Targeted Forecasts for Any Location &amp; Time (coming soon)</p>
+      <p class="credit">
+        CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magician) &amp; his Lovely AI Assistant Luma
+      </p>
+
+      <div class="detected">
+        <label class="row"><span>Date:</span>
+          <input type="date" id="date-field" aria-label="Forecast date" />
+        </label>
+        <div class="row"><span>Lat/Lon:</span> <span id="latlon">Loading...</span></div>
+        <div class="row"><span>Address:</span> <span id="address">Loading...</span></div>
+        <div id="geo-note" class="note" role="status" aria-live="polite"></div>
+      </div>
+    </header>
 
     <!-- Input Section -->
-    <div class="input-section">
-      <label>
-        <input type="radio" name="locChoice" value="latlon" checked> Use LAT/LON
+    <section class="inputs">
+      <div class="radio-group" role="radiogroup" aria-label="Location source">
+        <label class="radio"><input type="radio" name="locChoice" value="latlon" checked /> Use LAT/LON</label>
+        <label class="radio"><input type="radio" name="locChoice" value="address" /> Use Address</label>
+      </div>
+
+      <label class="address-input">
+        <span class="visually-hidden">Manual address</span>
+        <input type="text" id="manual-address" placeholder="Enter address manually" autocomplete="off" />
       </label>
-      <label>
-        <input type="radio" name="locChoice" value="address"> Use Address
+    </section>
+
+    <!-- Tip gating -->
+    <section class="tip-gate">
+      <button id="tip-button" class="btn tip-btn" aria-describedby="tip-helper">Please Tip, Thank You</button>
+      <label class="not-now">
+        <input type="checkbox" id="not-now" /> Not now, thank you
       </label>
-      <input type="text" id="manual-address" placeholder="Enter address manually">
-    </div>
+      <div id="tip-message" class="tip-message" aria-live="polite"></div>
+      <div id="tip-helper" class="tip-helper cursive">Please tip, Thank you.</div>
+    </section>
 
     <!-- Forecast Section -->
-    <div class="forecast-section">
-      <button id="get-forecast">Get Luma Forecast</button>
-      <span class="paste-instructions">PASTE INTO GPT WINDOW</span>
-      <pre id="forecast-box"></pre>
-      <button id="copy-forecast">Copy Forecast</button>
-      <div class="tip-container">
-        <button id="tip-button">Please Tip, Thank You</button>
-        <label><input type="checkbox" id="not-now"> Not now, thank you</label>
+    <section class="forecast">
+      <div class="action-row">
+        <button id="get-forecast" class="btn primary">Get Luma Forecast</button>
+        <span class="paste-hint">PASTE INTO GPT WINDOW</span>
       </div>
-      <div id="tip-message" class="tip-message"></div>
-    </div>
 
-    <!-- QR Code Section -->
-    <div class="qr-section" id="qr-container"></div>
+      <pre id="forecast-box" class="forecast-box" aria-label="Luma Forecast prompt"></pre>
 
-  </div>
+      <div class="copy-row">
+        <button id="copy-forecast" class="btn">Copy Forecast</button>
+        <span id="status" class="status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <!-- QR Code -->
+    <section class="qr-wrap">
+      <div id="qr-container" class="qr"></div>
+    </section>
+  </main>
 </body>
 </html>
