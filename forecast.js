@@ -1,80 +1,136 @@
-document.getElementById('current-date').textContent = new Date().toDateString();
+// Elements
+const latlonEl = document.getElementById("latlon");
+const addressEl = document.getElementById("address");
+const addressInput = document.getElementById("address-input");
+const dateInput = document.getElementById("date-input");
+const lumaOutput = document.getElementById("luma-output");
+const forecastButton = document.getElementById("forecast-button");
+const copyButton = document.getElementById("copy-button");
+const tipButton = document.getElementById("tip-button");
+const tipMsg = document.getElementById("tip-msg");
+const noTipCheckbox = document.getElementById("no-tip");
+const qrCanvas = document.getElementById("qr-canvas");
 
-let lat = 42.800142;
-let lon = -73.951401;
-let addr = "1221, Third Avenue, Mont Pleasant, City of Schenectady, Schenectady, New York, 12303, United States";
+// Initialize date input
+const today = new Date().toISOString().split("T")[0];
+dateInput.value = today;
 
-function updateDisplay() {
-  document.getElementById('latlon').textContent = `${lat}, ${lon}`;
-  document.getElementById('address').textContent = addr;
+// Variables
+let currentLat = "";
+let currentLon = "";
+let currentAddress = "";
+
+// Generate QR Code
+function generateQR(url) {
+  QRCode.toCanvas(qrCanvas, url, { width: 150 }, function (error) {
+    if (error) console.error(error);
+  });
+}
+
+// Set location
+function setLocation(lat, lon, address) {
+  currentLat = lat;
+  currentLon = lon;
+  currentAddress = address;
+  latlonEl.textContent = `${lat}, ${lon}`;
+  addressEl.textContent = address;
 }
 
 // Browser geolocation
 if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    lat = pos.coords.latitude.toFixed(6);
-    lon = pos.coords.longitude.toFixed(6);
-    updateDisplay();
-  });
-} else {
-  updateDisplay();
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lon = pos.coords.longitude.toFixed(6);
+      // Reverse geocode using Nominatim (free API)
+      let address = "Fetching address...";
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+        const data = await res.json();
+        address = data.display_name || address;
+      } catch (e) {
+        console.error(e);
+      }
+      setLocation(lat, lon, address);
+    },
+    () => setLocation("--", "--", "--")
+  );
 }
 
-// Manual address input with real geocoding
-document.getElementById('address-input').addEventListener('change', async (e) => {
-  addr = e.target.value;
+// Address input updates location (geocode)
+addressInput.addEventListener("change", async () => {
+  const addr = addressInput.value.trim();
+  if (!addr) return;
   try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
-    const data = await response.json();
-    if (data && data.length > 0) {
-      lat = parseFloat(data[0].lat).toFixed(6);
-      lon = parseFloat(data[0].lon).toFixed(6);
-      addr = data[0].display_name;
-      updateDisplay();
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(addr)}`);
+    const data = await res.json();
+    if (data.length > 0) {
+      const { lat, lon, display_name } = data[0];
+      setLocation(parseFloat(lat).toFixed(6), parseFloat(lon).toFixed(6), display_name);
     } else {
-      alert("Address not found. Using original input.");
+      alert("Address not found.");
     }
-  } catch (err) {
-    alert("Geocoding failed. Using original input.");
+  } catch (e) {
+    console.error(e);
   }
 });
 
-// Tip gating
-let tipAcknowledged = false;
-document.getElementById('tip-btn').addEventListener('click', () => {
-  alert("Tip Cozmo, when you see him… Paypal coming soon");
-  tipAcknowledged = true;
-});
-document.getElementById('not-now').addEventListener('change', () => {
-  tipAcknowledged = true;
+// Tip button
+tipButton.addEventListener("click", () => {
+  tipMsg.textContent = "Tip Cozmo when you see him, PayPal coming soon";
 });
 
-// Forecast generation with GPT tab reuse
-let gptTab = null;
-document.getElementById('forecast-btn').addEventListener('click', () => {
-  if (!tipAcknowledged) return alert("Please acknowledge tip or select 'Not now'");
-  
-  const locMode = document.querySelector('input[name="locMode"]:checked').value;
-  const location = locMode === 'latlon' ? `${lat}, ${lon}` : addr;
+// Forecast generation
+forecastButton.addEventListener("click", () => {
+  if (!tipMsg.textContent && !noTipCheckbox.checked) return;
 
-  const prompt = `LUMA_FORECAST {\n LOCATION: "${location}";\n DATE: "Today";\n DATA_NODES: {\n ATMOSPHERIC: DRUID/Atmospheric/*;\n OCEANIC_RIVERINE: DRUID/Water/*;\n WHALESONG: Acoustic/Buoy/*;\n SATELLITE: DRUID/Satellite/*;\n HISTORICAL: Charlie_Archive/*;\n };\n PROCESS: {\n INTEGRATE: REALTIME_NODES + HISTORICAL_ANALOGS;\n ANALYZE: HourlyMinuteForecast;\n OUTPUT_PRECISION: Times(AM_PM, MinuteResolution);\n EVENTS: PrecipitationChange, WindChange, TempChange, StormOnset;\n CONFIDENCE: Stars(★–★★★★★);\n FORMAT: HumanReadableText + GraphicPlaceholder;\n };\n OUTPUT: {\n TEXT_FORECAST: TRUE;\n GRAPHIC_FORECAST: TRUE;\n WAVEFORM_COLLAPSE: TRUE;\n SESSION_MARKER: Murphy#=1430;\n };\n}`;
+  const useSource = document.querySelector('input[name="location-source"]:checked').value;
+  const location = useSource === "latlon" ? `${currentLat}, ${currentLon}` : currentAddress;
+  const dateVal = dateInput.value || today;
 
-  document.getElementById('luma-forecast').textContent = prompt;
+  const prompt = `LUMA_FORECAST {
+  LOCATION: "${location}";
+  DATE: "${dateVal}";
+
+  DATA_NODES: {
+    ATMOSPHERIC: DRUID/Atmospheric/*;
+    OCEANIC_RIVERINE: DRUID/Water/*;
+    WHALESONG: Acoustic/Buoy/*;
+    SATELLITE: DRUID/Satellite/*;
+    HISTORICAL: Charlie_Archive/*;
+  };
+
+  PROCESS: {
+    INTEGRATE: REALTIME_NODES + HISTORICAL_ANALOGS;
+    ANALYZE: HourlyMinuteForecast;
+    OUTPUT_PRECISION: Times(AM_PM, MinuteResolution);
+    EVENTS: PrecipitationChange, WindChange, TempChange, StormOnset;
+    CONFIDENCE: Stars(★–★★★★★);
+    FORMAT: HumanReadableText + GraphicPlaceholder;
+  };
+
+  OUTPUT: {
+    TEXT_FORECAST: TRUE;
+    GRAPHIC_FORECAST: TRUE;
+    WAVEFORM_COLLAPSE: TRUE;
+    SESSION_MARKER: Murphy#1430;
+  };
+}`;
+  lumaOutput.textContent = prompt;
   navigator.clipboard.writeText(prompt);
 
-  if (!gptTab || gptTab.closed) {
-    gptTab = window.open('https://chat.openai.com/', '_blank');
-  } else {
-    gptTab.focus();
+  // ChatGPT tab reuse
+  let gptWindow = window.open("", "chatgpt");
+  if (!gptWindow.location.href.includes("chat.openai.com")) {
+    gptWindow.location.href = "https://chat.openai.com/chat";
   }
+  gptWindow.focus();
 });
 
-// Manual copy button
-document.getElementById('copy-btn').addEventListener('click', () => {
-  navigator.clipboard.writeText(document.getElementById('luma-forecast').textContent);
+// Manual copy
+copyButton.addEventListener("click", () => {
+  navigator.clipboard.writeText(lumaOutput.textContent);
 });
 
-// QR Code centered
-const canvas = document.getElementById('qr-code');
-const qrUrl = 'https://weather-dart.github.io/weather-dart/';
-const qr = new QRious({ element: canvas, value: qrUrl, size: 150 });
+// Generate page QR
+generateQR("https://weather-dart.github.io/weather-dart/");

@@ -7,41 +7,50 @@
   <link rel="stylesheet" href="weather-dart.css">
 </head>
 <body>
-  <div class="header">
-    <div class="header-icon">🎯</div>
-    <h1>Weather-Dart</h1>
-    <p>Targeted Forecasts for Any Location & Time (coming soon)</p>
-    <p>CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magician) & his Lovely AI Assistant Luma</p>
-    <p id="current-date"></p>
-    <p>Lat/Lon: <span id="latlon"></span></p>
-    <p>Address: <span id="address"></span></p>
-  </div>
+  <div class="container">
+    <!-- Header / Intro -->
+    <div class="header">
+      <div class="header-icon">🎯</div>
+      <h1>Weather-Dart</h1>
+      <p>Targeted Forecasts for Any Location & Time (coming soon)</p>
+      <p>CREATED BY: NEIL CURTIS LOVEST DUPREE (aka Cozmo the Magician) & his Lovely AI Assistant Luma</p>
+      <p>Date: <input type="date" id="date-input"></p>
+      <p>Lat/Lon: <span id="latlon">--</span></p>
+      <p>Address: <span id="address">--</span></p>
+    </div>
 
-  <div class="input-section">
-    <input type="text" id="address-input" placeholder="Enter address manually">
-    <div class="toggle-buttons">
-      <label><input type="radio" name="locMode" value="latlon" checked> Use LAT/LON</label>
-      <label><input type="radio" name="locMode" value="address"> Use Address</label>
+    <!-- Input Section -->
+    <div class="input-section">
+      <label for="address-input">Enter Address:</label>
+      <input type="text" id="address-input" placeholder="Optional">
+      <div class="toggle">
+        <label><input type="radio" name="location-source" value="latlon" checked> Use LAT/LON</label>
+        <label><input type="radio" name="location-source" value="address"> Use Address</label>
+      </div>
+    </div>
+
+    <!-- Tip Section -->
+    <div class="tip-section">
+      <button id="tip-button">Please Tip, Thank You</button>
+      <span id="tip-msg"></span>
+      <label><input type="checkbox" id="no-tip"> Not now, thank you</label>
+    </div>
+
+    <!-- Forecast Section -->
+    <div class="forecast-section">
+      <button id="forecast-button">Get Luma Forecast</button>
+      <span class="instruction">PASTE INTO GPT WINDOW</span>
+      <pre id="luma-output"></pre>
+      <button id="copy-button">Copy</button>
+    </div>
+
+    <!-- QR Code -->
+    <div class="qr-section">
+      <canvas id="qr-canvas"></canvas>
     </div>
   </div>
 
-  <div class="tip-section">
-    <button id="tip-btn">Please Tip, Thank You</button>
-    <input type="checkbox" id="not-now"> Not now, thank you
-  </div>
-
-  <div class="forecast-section">
-    <button id="forecast-btn">Get Luma Forecast</button>
-    <span>PASTE INTO GPT WINDOW</span>
-    <pre id="luma-forecast"></pre>
-    <button id="copy-btn">Copy Forecast</button>
-  </div>
-
-  <div class="qr-section">
-    <canvas id="qr-code"></canvas>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script src="forecast.js"></script>
 </body>
 </html>
